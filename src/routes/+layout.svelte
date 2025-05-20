@@ -7,7 +7,7 @@
 <div class="flex min-h-screen flex-col">
 	<header class="bg-blue-600 text-white">
 		<div class="container mx-auto flex items-center justify-between p-4">
-			<h1 class="text-xl font-bold">Svelte Todos</h1>
+			<h1 class="text-xl font-bold">Svelte Todos MO</h1>
 			<nav>
 				<ul class="flex space-x-4">
 					<li><a href="/" class="hover:underline">Home</a></li>
