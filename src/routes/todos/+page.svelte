@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { PageData } from './$types';
+	import { Card, Input, Button, Checkbox } from '@skeletonlabs/skeleton-svelte';
 
 	export let data: PageData;
 
@@ -23,7 +24,7 @@
 	<title>Todos</title>
 </svelte:head>
 
-<div class="container mx-auto max-w-3xl p-4">
+<Card class="container mx-auto max-w-3xl p-4">
 	<h1 class="mb-6 text-3xl font-bold">Todos</h1>
 
 	<!-- Add new todo form -->
@@ -40,16 +41,14 @@
 		}}
 		class="mb-8 flex items-center gap-2"
 	>
-		<input
+		<Input
 			type="text"
 			name="text"
 			bind:value={newTodoText}
 			placeholder="Add a new todo..."
-			class="flex-grow rounded border border-gray-300 p-2"
+			class="flex-grow"
 		/>
-		<button type="submit" class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
-			Add Todo
-		</button>
+		<Button type="submit" class="variant-filled-primary">Add Todo</Button>
 	</form>
 
 	<!-- Todo list -->
@@ -59,44 +58,35 @@
 		{/if}
 
 		{#each data.todos as todo (todo.id)}
-			<div class="flex items-center gap-3 rounded bg-white p-4 shadow-md">
+			<Card class="flex items-center gap-3 p-4">
 				<!-- Toggle done status -->
 				<form
 					method="POST"
 					action="?/toggleDone"
 					use:enhance={() =>
 						({ result, update }) => {
-							console.log(result);
 							if (result.type === 'success') {
 								update();
 							}
 						}}
+					class="flex-shrink-0"
 				>
 					<input type="hidden" name="id" value={todo.id} />
-					<input type="hidden" name="done" value={todo.done.toString()} />
-					<button type="submit" class="flex-shrink-0">
-						<div
-							class="flex h-6 w-6 items-center justify-center rounded-md border-2 {todo.done
-								? 'border-green-500 bg-green-500'
-								: 'border-gray-300'}"
-						>
-							{#if todo.done}
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="16"
-									height="16"
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke="white"
-									stroke-width="3"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-								>
-									<polyline points="20 6 9 17 4 12"></polyline>
-								</svg>
-							{/if}
-						</div>
-					</button>
+					<!-- The 'done' input is still useful for progressive enhancement if JS fails -->
+					<input type="hidden" name="done" value={(!todo.done).toString()} />
+					<Checkbox
+						checked={todo.done}
+						on:change={(e) => {
+							// Programmatically submit the form when checkbox state changes
+							// HTMLFormElement.requestSubmit() is the modern way to do this
+							const form = e.currentTarget.closest('form');
+							if (form) {
+								form.requestSubmit();
+							}
+						}}
+						aria-label="Toggle todo status"
+						class="flex-shrink-0"
+					/>
 				</form>
 
 				{#if editingId === todo.id}
@@ -112,29 +102,20 @@
 								}
 							};
 						}}
-						class="flex flex-grow gap-2"
+						class="flex flex-grow items-center gap-2"
 					>
 						<input type="hidden" name="id" value={todo.id} />
 						<input type="hidden" name="done" value={todo.done.toString()} />
-						<input
+						<Input
 							type="text"
 							name="text"
 							bind:value={editText}
-							class="flex-grow rounded border border-gray-300 p-2"
+							class="flex-grow"
 						/>
-						<button
-							type="submit"
-							class="rounded bg-green-500 px-3 py-1 text-white hover:bg-green-600"
-						>
-							Save
-						</button>
-						<button
-							type="button"
-							on:click={cancelEditing}
-							class="rounded bg-gray-300 px-3 py-1 text-gray-700 hover:bg-gray-400"
-						>
+						<Button type="submit" class="variant-filled-success">Save</Button>
+						<Button type="button" on:click={cancelEditing} class="variant-ghost-surface">
 							Cancel
-						</button>
+						</Button>
 					</form>
 				{:else}
 					<!-- View mode -->
@@ -143,26 +124,13 @@
 					</span>
 
 					<div class="flex flex-shrink-0 gap-2">
-						<button
+						<Button
 							aria-label="Edit todo"
 							on:click={() => startEditing(todo)}
-							class="cursor-pointer text-blue-500 hover:text-blue-700"
+							class="variant-soft-primary"
 						>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="16"
-								height="16"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-							>
-								<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-								<path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-							</svg>
-						</button>
+							Edit
+						</Button>
 
 						<form
 							method="POST"
@@ -175,42 +143,13 @@
 								}}
 						>
 							<input type="hidden" name="id" value={todo.id} />
-							<button
-								type="submit"
-								aria-label="Delete todo"
-								class="cursor-pointer text-red-500 hover:text-red-700"
-							>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="16"
-									height="16"
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke="currentColor"
-									stroke-width="2"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-								>
-									<polyline points="3 6 5 6 21 6"></polyline>
-									<path
-										d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-									></path>
-									<line x1="10" y1="11" x2="10" y2="17"></line>
-									<line x1="14" y1="11" x2="14" y2="17"></line>
-								</svg>
-							</button>
+							<Button type="submit" aria-label="Delete todo" class="variant-soft-error">
+								Delete
+							</Button>
 						</form>
 					</div>
 				{/if}
-			</div>
+			</Card>
 		{/each}
 	</div>
-</div>
-
-<style>
-	input:focus,
-	button:focus {
-		outline: 2px solid rgb(59, 130, 246);
-		outline-offset: 2px;
-	}
-</style>
+</Card>

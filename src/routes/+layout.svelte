@@ -1,29 +1,22 @@
 <script lang="ts">
 	import '../app.css';
+	import { AppShell, AppBar } from '@skeletonlabs/skeleton-svelte';
 
 	let { children } = $props();
 </script>
 
-<div class="flex min-h-screen flex-col">
-	<header class="bg-blue-600 text-white">
-		<div class="container mx-auto flex items-center justify-between p-4">
-			<h1 class="text-xl font-bold">Svelte Todos</h1>
-			<nav>
-				<ul class="flex space-x-4">
-					<li><a href="/" class="hover:underline">Home</a></li>
-					<li><a href="/todos" class="hover:underline">Todos</a></li>
-				</ul>
-			</nav>
-		</div>
-	</header>
-
-	<main class="flex-grow">
-		{@render children()}
-	</main>
-
-	<footer class="bg-gray-100 p-4 text-center text-gray-600">
-		<div class="container mx-auto">
-			<p>Svelte Todos App - {new Date().getFullYear()}</p>
-		</div>
-	</footer>
-</div>
+<AppShell>
+	<svelte:fragment slot="header">
+		<AppBar>
+			<svelte:fragment slot="lead">
+				<strong class="text-xl uppercase">Svelte Todos</strong>
+			</svelte:fragment>
+			<svelte:fragment slot="trail">
+				<a href="/" class="btn btn-sm variant-ghost-surface">Home</a>
+				<a href="/todos" class="btn btn-sm variant-ghost-surface">Todos</a>
+			</svelte:fragment>
+		</AppBar>
+	</svelte:fragment>
+	<!-- Main content -->
+	{@render children()}
+</AppShell>
