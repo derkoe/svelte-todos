@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 @import '@skeletonlabs/skeleton';
-@import '@skeletonlabs/skeleton/optional/presets';
+/* The problematic line "@skeletonlabs/skeleton/optional/presets" was removed */
 @import '@skeletonlabs/skeleton/themes/cerberus'; /* Or a theme of choice */
 @source '../node_modules/@skeletonlabs/skeleton-svelte/dist';
 @plugin '@tailwindcss/forms';
